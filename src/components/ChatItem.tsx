@@ -1,134 +1,67 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import { useNavigate } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
+import { Clock } from 'lucide-react';
 
 interface ChatItemProps {
+  id: string;
   name: string;
   lastMessage: string;
   timestamp: string;
   unread?: number;
   expiresIn?: string;
-  onPress: () => void;
 }
 
 const ChatItem: React.FC<ChatItemProps> = ({ 
+  id,
   name, 
   lastMessage, 
   timestamp, 
   unread = 0,
-  expiresIn,
-  onPress 
+  expiresIn
 }) => {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    navigate(`/chat/${id}`);
+  };
+  
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <View style={styles.avatarContainer}>
-        <Text style={styles.avatarText}>{name.charAt(0).toUpperCase()}</Text>
-      </View>
-      
-      <View style={styles.contentContainer}>
-        <View style={styles.headerRow}>
-          <Text style={styles.name} numberOfLines={1}>{name}</Text>
-          <Text style={styles.timestamp}>{timestamp}</Text>
-        </View>
+    <Card 
+      className="p-4 cursor-pointer hover:bg-gray-50 transition-colors card-hover mb-2"
+      onClick={handleClick}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-medium">
+            {name.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-gray-900 truncate">{name}</h3>
+              <span className="text-xs text-gray-500">{timestamp}</span>
+            </div>
+            
+            <p className="text-sm text-gray-500 truncate">{lastMessage}</p>
+            
+            {expiresIn && (
+              <div className="text-xs text-orange-500 flex items-center mt-1">
+                <Clock size={12} className="mr-1" />
+                <span>Expires in: {expiresIn}</span>
+              </div>
+            )}
+          </div>
+        </div>
         
-        <View style={styles.bottomRow}>
-          <Text style={styles.message} numberOfLines={1}>
-            {lastMessage}
-          </Text>
-          
-          {unread > 0 && (
-            <View style={styles.unreadBadge}>
-              <Text style={styles.unreadText}>{unread}</Text>
-            </View>
-          )}
-          
-          {expiresIn && (
-            <View style={styles.expiryContainer}>
-              <Icon name="clock" size={12} color="#F5A623" />
-              <Text style={styles.expiryText}>{expiresIn}</Text>
-            </View>
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
+        {unread > 0 && (
+          <div className="ml-2 bg-primary rounded-full w-5 h-5 flex items-center justify-center">
+            <span className="text-xs text-white">{unread}</span>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    padding: 15,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  avatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#4A90E2',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 15,
-  },
-  avatarText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  name: {
-    fontWeight: '600',
-    fontSize: 16,
-    flex: 1,
-  },
-  timestamp: {
-    color: '#999',
-    fontSize: 12,
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  message: {
-    color: '#666',
-    fontSize: 14,
-    flex: 1,
-  },
-  unreadBadge: {
-    backgroundColor: '#4A90E2',
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-  },
-  unreadText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  expiryContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 8,
-  },
-  expiryText: {
-    color: '#F5A623',
-    fontSize: 12,
-    marginLeft: 4,
-  },
-});
 
 export default ChatItem;

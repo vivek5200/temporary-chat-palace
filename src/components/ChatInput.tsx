@@ -1,99 +1,62 @@
 
 import React, { useState } from 'react';
-import { 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet,
-  Platform,
-  Keyboard
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Send, Smile } from "lucide-react";
 
 interface ChatInputProps {
-  onSend: (text: string) => void;
+  onSendMessage: (text: string) => void;
+  disabled?: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }) => {
   const [message, setMessage] = useState('');
   
   const handleSend = () => {
     if (message.trim()) {
-      onSend(message);
+      onSendMessage(message.trim());
       setMessage('');
-      Keyboard.dismiss();
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSend();
   };
   
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Icon name="smile" size={24} color="#666" />
-        </TouchableOpacity>
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Type a message..."
-          value={message}
-          onChangeText={setMessage}
-          multiline
-          maxLength={500}
-          returnKeyType="send"
-          onSubmitEditing={handleSend}
-        />
-        
-        <TouchableOpacity style={styles.button}>
-          <Icon name="paperclip" size={24} color="#666" />
-        </TouchableOpacity>
-      </View>
-      
-      <TouchableOpacity 
-        style={styles.sendButton} 
-        onPress={handleSend}
-        disabled={!message.trim()}
+    <form 
+      onSubmit={handleSubmit} 
+      className="flex items-center gap-2 border-t bg-white p-3 sticky bottom-0"
+    >
+      <Button 
+        type="button" 
+        size="icon" 
+        variant="ghost"
+        className="text-gray-500 hover:text-gray-700"
+        disabled={disabled}
       >
-        <Icon name="send" size={22} color="#fff" />
-      </TouchableOpacity>
-    </View>
+        <Smile className="h-5 w-5" />
+      </Button>
+      
+      <Input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type your message..."
+        className="flex-1"
+        disabled={disabled}
+      />
+      
+      <Button 
+        type="submit" 
+        size="icon" 
+        disabled={!message.trim() || disabled}
+        className={`text-white ${!message.trim() ? 'opacity-50' : ''}`}
+      >
+        <Send className="h-4 w-4" />
+      </Button>
+    </form>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    padding: 8,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    alignItems: 'center',
-  },
-  inputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 24,
-    paddingHorizontal: 10,
-    marginRight: 8,
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    padding: Platform.OS === 'ios' ? 10 : 8,
-    fontSize: 16,
-    maxHeight: 100,
-  },
-  button: {
-    padding: 8,
-  },
-  sendButton: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: '#4A90E2',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default ChatInput;
