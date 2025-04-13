@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   View, 
@@ -80,7 +79,7 @@ const ChatPage: React.FC = () => {
           },
           {
             id: '3',
-            content: 'I've made some progress on the design.',
+            content: 'I\'ve made some progress on the design.',
             sender: 'Bob',
             timestamp: new Date(Date.now() - 3 * 60000).toISOString()
           }
@@ -104,7 +103,7 @@ const ChatPage: React.FC = () => {
           },
           {
             id: '2',
-            content: 'I'm good, thanks for asking! How about you?',
+            content: 'I\'m good, thanks for asking! How about you?',
             sender: username,
             timestamp: new Date(Date.now() - 8 * 60000).toISOString()
           },
